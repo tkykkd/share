@@ -31,6 +31,7 @@ const Section = ({ children, className = '', id }: SectionProps) => {
 };
 
 const AudioPlayer = () => {
+  const withBase = (path: string) => `${import.meta.env.BASE_URL}${path.replace(/^\/+/, '')}`;
   const [voicePlaying, setVoicePlaying] = React.useState(false);
   const [bgMusicPlaying, setBgMusicPlaying] = React.useState(false);
   const [bgVolume, setBgVolume] = React.useState(35);
@@ -119,12 +120,12 @@ const AudioPlayer = () => {
       <div className="bg-zinc-900/80 backdrop-blur-md border border-gold-500/20 p-4 rounded-2xl luxury-shadow flex items-center gap-4">
         <audio 
           ref={bgAudioRef}
-          src="/audio/happy-birthday-reverb-slow.mp3"
+          src={withBase('/audio/happy-birthday-reverb-slow.mp3')}
           loop 
         />
         <audio
           ref={voiceAudioRef}
-          src="/audio/voice-message.mp3"
+          src={withBase('/audio/voice-message.mp3')}
           onEnded={() => setVoicePlaying(false)}
         />
         <div className="flex flex-col">
@@ -239,7 +240,7 @@ export default function App() {
         </div>
         <div className="mt-12">
           <img
-            src="/images/chapters/chapter-01.png"
+            src={withBase('/images/chapters/chapter-01.png')}
             alt="Chapter 01 memory"
             className="w-full max-w-3xl mx-auto aspect-[16/9] object-cover rounded-2xl border border-gold-500/20"
             loading="lazy"
@@ -267,7 +268,7 @@ export default function App() {
         </div>
         <div className="mt-12">
           <img
-            src="/images/chapters/chapter-02.png"
+            src={withBase('/images/chapters/chapter-02.png')}
             alt="Chapter 02 memory"
             className="w-full max-w-3xl mx-auto aspect-[16/9] object-cover rounded-2xl border border-gold-500/20"
             loading="lazy"
@@ -294,7 +295,7 @@ export default function App() {
         </div>
         <div className="mt-12">
           <img
-            src="/images/chapters/chapter-03.png"
+            src={withBase('/images/chapters/chapter-03.png')}
             alt="Chapter 03 memory"
             className="w-full max-w-3xl mx-auto aspect-[16/9] object-cover rounded-2xl border border-gold-500/20"
             loading="lazy"
@@ -321,7 +322,7 @@ export default function App() {
         </div>
         <div className="mt-12">
           <img
-            src="/images/chapters/chapter-04.png"
+            src={withBase('/images/chapters/chapter-04.png')}
             alt="Chapter 04 memory"
             className="w-full max-w-3xl mx-auto aspect-[16/9] object-cover rounded-2xl border border-gold-500/20"
             loading="lazy"
@@ -347,7 +348,7 @@ export default function App() {
         </div>
         <div className="mt-12">
           <img
-            src="/images/chapters/chapter-05.png"
+            src={withBase('/images/chapters/chapter-05.png')}
             alt="Chapter 05 memory"
             className="w-full max-w-3xl mx-auto aspect-[16/9] object-cover rounded-2xl border border-gold-500/20"
             loading="lazy"
@@ -372,7 +373,7 @@ export default function App() {
             </p>
             <div className="mt-12">
               <img
-                src="/images/ending/hbd.png"
+                src={withBase('/images/ending/hbd.png')}
                 alt="Happy birthday message"
                 className="w-full max-w-3xl mx-auto h-auto object-contain rounded-2xl border border-gold-500/20"
                 loading="lazy"
