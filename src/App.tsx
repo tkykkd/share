@@ -312,7 +312,7 @@ export default function App() {
         <div className="space-y-6 text-zinc-400 leading-loose font-serif text-lg">
           <p>
             僕の人生の大きな転換点。
-            創価学会への入会を決めたとき、君は何も言わずに寄り添ってくれた。
+            海外への旅立ちを決めたとき、君は何も言わずに寄り添ってくれた。
           </p>
           <p>
             言葉ではない、ただそこに在るという「信義」。
@@ -372,7 +372,7 @@ export default function App() {
             </p>
             <div className="mt-12">
               <img
-                src="images/ending/hbd.png"
+                src="images/ending/HBD.jpg"
                 alt="Happy birthday message"
                 className="w-full max-w-3xl mx-auto h-auto object-contain rounded-2xl border border-gold-500/20"
                 loading="lazy"
