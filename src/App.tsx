@@ -124,7 +124,7 @@ const AudioPlayer = () => {
         />
         <audio
           ref={voiceAudioRef}
-          src="audio/voice-message.mp3"
+          src="audio/voice-message-v2.mp3"
           onEnded={() => setVoicePlaying(false)}
         />
         <div className="flex flex-col">
