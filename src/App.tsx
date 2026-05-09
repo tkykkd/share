@@ -36,13 +36,46 @@ const AudioPlayer = () => {
   const [bgVolume, setBgVolume] = React.useState(35);
   const bgAudioRef = useRef<HTMLAudioElement>(null);
   const voiceAudioRef = useRef<HTMLAudioElement>(null);
+  const bgAudioContextRef = useRef<AudioContext | null>(null);
+  const bgGainNodeRef = useRef<GainNode | null>(null);
+  const bgSourceNodeRef = useRef<MediaElementAudioSourceNode | null>(null);
+
+  const applyBgVolume = React.useCallback((volume: number) => {
+    const normalized = volume / 100;
+    const audio = bgAudioRef.current;
+    if (audio) {
+      audio.volume = normalized;
+    }
+    if (bgGainNodeRef.current) {
+      bgGainNodeRef.current.gain.value = normalized;
+    }
+  }, []);
+
+  const ensureMobileVolumeControl = React.useCallback(() => {
+    const audio = bgAudioRef.current;
+    if (!audio || bgAudioContextRef.current) return;
+
+    const Ctx = window.AudioContext || (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    if (!Ctx) return;
+
+    const context = new Ctx();
+    const source = context.createMediaElementSource(audio);
+    const gainNode = context.createGain();
+    source.connect(gainNode);
+    gainNode.connect(context.destination);
+
+    bgAudioContextRef.current = context;
+    bgSourceNodeRef.current = source;
+    bgGainNodeRef.current = gainNode;
+    applyBgVolume(bgVolume);
+  }, [applyBgVolume, bgVolume]);
 
   // Try to start BGM automatically on page load.
   // Note: browsers may block autoplay until a user gesture occurs.
   React.useEffect(() => {
     const audio = bgAudioRef.current;
     if (!audio) return;
-    audio.volume = bgVolume / 100;
+    applyBgVolume(bgVolume);
 
     audio
       .play()
@@ -50,17 +83,31 @@ const AudioPlayer = () => {
       .catch(() => {
         // Autoplay blocked; user can start it via the UI button.
       });
-  }, []);
+  }, [applyBgVolume, bgVolume]);
 
   React.useEffect(() => {
-    const audio = bgAudioRef.current;
-    if (!audio) return;
-    audio.volume = bgVolume / 100;
-  }, [bgVolume]);
+    applyBgVolume(bgVolume);
+  }, [applyBgVolume, bgVolume]);
+
+  React.useEffect(() => {
+    return () => {
+      if (bgAudioContextRef.current) {
+        bgAudioContextRef.current.close().catch(() => {
+          // Ignore cleanup errors.
+        });
+      }
+    };
+  }, []);
 
   const toggleBgMusic = () => {
     const audio = bgAudioRef.current;
     if (!audio) return;
+    ensureMobileVolumeControl();
+    if (bgAudioContextRef.current?.state === 'suspended') {
+      bgAudioContextRef.current.resume().catch(() => {
+        // Ignore; some browsers keep context suspended until playback starts.
+      });
+    }
 
     if (audio.paused) {
       audio
@@ -124,7 +171,7 @@ const AudioPlayer = () => {
         />
         <audio
           ref={voiceAudioRef}
-          src="audio/voice-message.mp3"
+          src="audio/voice-message-v2.mp3"
           onEnded={() => setVoicePlaying(false)}
         />
         <div className="flex flex-col">
@@ -312,7 +359,7 @@ export default function App() {
         <div className="space-y-6 text-zinc-400 leading-loose font-serif text-lg">
           <p>
             僕の人生の大きな転換点。
-            創価学会への入会を決めたとき、君は何も言わずに寄り添ってくれた。
+            海外への旅立ちを決めたとき、君は何も言わずに寄り添ってくれた。
           </p>
           <p>
             言葉ではない、ただそこに在るという「信義」。
@@ -372,7 +419,7 @@ export default function App() {
             </p>
             <div className="mt-12">
               <img
-                src="images/ending/hbd.png"
+                src="images/ending/HBD.jpg"
                 alt="Happy birthday message"
                 className="w-full max-w-3xl mx-auto h-auto object-contain rounded-2xl border border-gold-500/20"
                 loading="lazy"
