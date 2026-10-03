@@ -1,4 +1,4 @@
-const CACHE = "teiji-v2";
+const CACHE = "teiji-v3";
 const ASSETS = [
   "./",
   "./index.html",
@@ -6,6 +6,7 @@ const ASSETS = [
   "./js/game.js",
   "./manifest.webmanifest",
   "./favicon.svg",
+  "./sprites/player.png",
   "./icons/grain.png",
   "./icons/icon-192.png",
   "./icons/icon-512.png",

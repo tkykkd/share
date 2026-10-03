@@ -109,6 +109,8 @@
   const MUTE_KEY = "teiji-mute-v1";
   const STAGE_MAX = 480;
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const playerSprite = new Image();
+  playerSprite.src = "sprites/player.png";
 
   const $ = (id) => document.getElementById(id);
   const app = $("app");
@@ -1234,7 +1236,7 @@
         const a = (i / p.trail.length) * 0.18;
         ctx.save();
         ctx.globalAlpha = a;
-        drawBody(state.stageLeft + tx, feet, 0, 1, false);
+        drawBody(state.stageLeft + tx, feet, 0, 1);
         ctx.restore();
       });
     }
@@ -1251,175 +1253,39 @@
     ctx.fill();
     ctx.restore();
 
-    drawBody(x, feet, state.mode === "dead" ? p.rot : p.lean * 0.12, 1, true);
+    drawBody(x, feet, state.mode === "dead" ? p.rot : p.lean * 0.12, 1);
   }
 
-  function drawBody(x, feet, rot, alpha, detail) {
-    const p = state.player;
-    const dead = state.mode === "dead";
+  function playerDrawSize() {
+    const nw = playerSprite.naturalWidth || 531;
+    const nh = playerSprite.naturalHeight || 720;
+    const aspect = nw / nh;
+    let h = clamp(state.h * 0.28, 156, 236);
+    let w = h * aspect;
+    const maxW = Math.max(96, state.stageW * 0.48);
+    if (w > maxW) {
+      w = maxW;
+      h = w / aspect;
+    }
+    return { w, h };
+  }
+
+  function drawBody(x, feet, rot, alpha) {
     ctx.save();
     ctx.globalAlpha *= alpha;
     ctx.translate(x, feet);
     ctx.rotate(rot);
-    ctx.scale(1.36, 1.36);
 
-    ctx.fillStyle = "rgba(0,0,0,0.35)";
+    const { w, h } = playerDrawSize();
+    ctx.fillStyle = "rgba(0,0,0,0.32)";
     ctx.beginPath();
-    ctx.ellipse(0, 4, 22, 6, 0, 0, Math.PI * 2);
+    ctx.ellipse(0, 6, Math.min(48, w * 0.28), 7, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    const step = Math.sin(p.bob * 2);
-    ctx.strokeStyle = "#121722";
-    ctx.lineWidth = 6;
-    ctx.lineCap = "round";
-    ctx.beginPath();
-    ctx.moveTo(-6, -18);
-    ctx.lineTo(-8 - step * 3, -2);
-    ctx.moveTo(6, -18);
-    ctx.lineTo(8 + step * 3, -2);
-    ctx.stroke();
-    ctx.strokeStyle = "#1c2433";
-    ctx.lineWidth = 4;
-    ctx.stroke();
-
-    roundRect(ctx, -16, -50, 32, 32, 9);
-    const suit = ctx.createLinearGradient(0, -50, 0, -18);
-    suit.addColorStop(0, "#314772");
-    suit.addColorStop(1, "#1a2744");
-    ctx.fillStyle = suit;
-    ctx.fill();
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = "#0d1424";
-    ctx.stroke();
-
-    ctx.fillStyle = "#f6f3ec";
-    ctx.beginPath();
-    ctx.moveTo(0, -48);
-    ctx.lineTo(8, -28);
-    ctx.lineTo(-8, -28);
-    ctx.fill();
-
-    ctx.fillStyle = "#ffc14d";
-    ctx.beginPath();
-    ctx.moveTo(0, -44);
-    ctx.lineTo(4, -30);
-    ctx.lineTo(0, -27);
-    ctx.lineTo(-4, -30);
-    ctx.fill();
-
-    ctx.fillStyle = "#5ce1ff";
-    roundRect(ctx, 6, -44, 8, 10, 2);
-    ctx.fill();
-
-    ctx.save();
-    ctx.translate(-20, -36 + p.lean * -2);
-    ctx.rotate(-0.4 + p.lean * 0.2);
-    roundRect(ctx, -6, -8, 14, 16, 3);
-    ctx.fillStyle = "#6a4324";
-    ctx.fill();
-    ctx.strokeStyle = "#3c2412";
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
-    ctx.fillStyle = "#ffc14d";
-    ctx.fillRect(-2, -2, 4, 3);
-    ctx.restore();
-
-    ctx.beginPath();
-    ctx.arc(0, -64, 17, 0, Math.PI * 2);
-    ctx.fillStyle = "#ffd3b0";
-    ctx.fill();
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = "#0e1422";
-    ctx.stroke();
-
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(0, -64, 17, 0, Math.PI * 2);
-    ctx.clip();
-    ctx.fillStyle = "#171a22";
-    ctx.fillRect(-20, -86, 40, 20);
-    ctx.beginPath();
-    ctx.moveTo(-14, -66);
-    ctx.quadraticCurveTo(-6, -72, 0, -66);
-    ctx.quadraticCurveTo(7, -73, 15, -66);
-    ctx.lineTo(15, -78);
-    ctx.lineTo(-15, -78);
-    ctx.fill();
-    ctx.fillRect(-17, -66, 5, 12);
-    ctx.fillRect(12, -66, 5, 10);
-    ctx.restore();
-
-    const blink = !dead && p.blink > 0;
-    const look = dead ? 0 : -1.2;
-    if (blink) {
-      ctx.strokeStyle = "#24180f";
-      ctx.lineWidth = 1.6;
-      ctx.beginPath();
-      ctx.moveTo(-8, -63);
-      ctx.lineTo(-3, -63);
-      ctx.moveTo(3, -63);
-      ctx.lineTo(8, -63);
-      ctx.stroke();
-    } else if (dead) {
-      ctx.strokeStyle = "#24180f";
-      ctx.lineWidth = 1.7;
-      ctx.beginPath();
-      ctx.moveTo(-8, -66);
-      ctx.lineTo(-3, -61);
-      ctx.moveTo(-3, -66);
-      ctx.lineTo(-8, -61);
-      ctx.moveTo(3, -66);
-      ctx.lineTo(8, -61);
-      ctx.moveTo(8, -66);
-      ctx.lineTo(3, -61);
-      ctx.stroke();
-    } else {
-      for (const ex of [-5.5, 5.5]) {
-        ctx.fillStyle = "#fff";
-        ctx.beginPath();
-        ctx.ellipse(ex, -63, 3.4, 3.8, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = "#1a1c24";
-        ctx.beginPath();
-        ctx.arc(ex + p.lean * 0.8, -63.4 + look, 1.8, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-
-    ctx.strokeStyle = "#1a1c24";
-    ctx.lineWidth = 1.5;
-    ctx.lineCap = "round";
-    ctx.beginPath();
-    ctx.moveTo(-9, -70);
-    ctx.quadraticCurveTo(-6, -73, -2, -69);
-    ctx.moveTo(9, -70);
-    ctx.quadraticCurveTo(6, -73, 2, -69);
-    ctx.stroke();
-
-    ctx.fillStyle = "rgba(255, 120, 110, 0.5)";
-    ctx.beginPath();
-    ctx.ellipse(-10, -59, 2.6, 1.5, 0, 0, Math.PI * 2);
-    ctx.ellipse(10, -59, 2.6, 1.5, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.strokeStyle = "#a36a58";
-    ctx.lineWidth = 1.3;
-    ctx.beginPath();
-    if (dead) {
-      ctx.moveTo(-3, -54);
-      ctx.quadraticCurveTo(0, -58, 3, -54);
-    } else {
-      ctx.moveTo(-2.6, -54);
-      ctx.quadraticCurveTo(0, -52, 2.6, -54);
-    }
-    ctx.stroke();
-
-    if (detail && state.danger && !dead) {
-      const drip = Math.sin(state.time * 8) * 2;
-      ctx.fillStyle = "#b9ecff";
-      ctx.beginPath();
-      ctx.ellipse(15, -76 + drip, 2.2, 3.4, 0.4, 0, Math.PI * 2);
-      ctx.fill();
+    if (playerSprite.complete && playerSprite.naturalWidth) {
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(playerSprite, -w / 2, -h + 8, w, h);
     }
 
     ctx.restore();
