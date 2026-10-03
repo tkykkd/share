@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#9fd6ff" />
+    <meta name="color-scheme" content="light" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="吸いコイン" />
+    <meta
+      name="description"
+      content="かいとが走って、BIP-BOがコインを吸い寄せる横スクロール。"
+    />
+    <title>吸いコイン</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="sprites/kaito.png" as="image" />
+    <link rel="preload" href="sprites/bipbo.png" as="image" />
+    <link rel="preload" href="fonts/dela-gothic-one.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <canvas id="view" width="390" height="844" aria-hidden="true"></canvas>
+
+    <p id="banner" hidden>ジャンプ！</p>
+
+    <header id="hud" hidden>
+      <div class="stat">
+        <span class="kicker">コイン</span>
+        <p class="num"><strong id="score">0</strong><span class="unit">枚</span></p>
+      </div>
+      <div class="stat end">
+        <span class="kicker">ベスト</span>
+        <p class="num"><strong id="best">0</strong><span class="unit">枚</span></p>
+      </div>
+    </header>
+
+    <section id="title">
+      <div class="title-top">
+        <p class="eyebrow">よこスクロール</p>
+        <h1>吸いコイン</h1>
+        <p class="oneliner">かいとが走って、BIP-BOがコインを吸い寄せる横スクロール。</p>
+      </div>
+      <div class="title-bottom">
+        <p class="title-best" id="title-best">ベスト 0枚</p>
+        <button id="start" type="button">はじめる</button>
+        <p class="hint">タップでジャンプ。長押し・上スワイプで高く。</p>
+        <p class="hint desktop">スペースキーでもジャンプ</p>
+      </div>
+    </section>
+
+    <section id="over" hidden>
+      <div class="card">
+        <p class="eyebrow" id="over-kicker">ラン終了</p>
+        <h2 id="over-title">おちた</h2>
+        <p class="result">コイン <strong id="over-score">0</strong>枚</p>
+        <p class="result best">ベスト <strong id="over-best">0</strong>枚</p>
+        <button id="retry" type="button">もう一回</button>
+      </div>
+    </section>
+
+    <script src="js/game.js"></script>
+  </body>
+</html>
